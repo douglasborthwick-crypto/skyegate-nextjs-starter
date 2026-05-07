@@ -1,0 +1,69 @@
+:root {
+  --bg: #fafafa;
+  --fg: #0a1628;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --pass-bg: #ecfdf5;
+  --pass-border: #6ee7b7;
+  --fail-bg: #fef2f2;
+  --fail-border: #fca5a5;
+  --code-bg: #0a1628;
+  --code-fg: #c9a84c;
+  --link: #1a4ea8;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+h1 { font-size: 28px; margin: 0 0 8px; }
+h2 { font-size: 20px; margin: 0 0 12px; }
+p  { margin: 0 0 16px; }
+
+a { color: var(--link); }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.muted { color: var(--muted); }
+
+.gate-card {
+  margin-top: 32px;
+  padding: 24px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.gate-card.pass  { background: var(--pass-bg); border-color: var(--pass-border); }
+.gate-card.fail  { background: var(--fail-bg); border-color: var(--fail-border); }
+
+.secret-box {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border: 1px solid var(--pass-border);
+  border-radius: 6px;
+}
+
+.error { color: #b91c1c; margin-top: 12px; }
+
+.row { margin-top: 32px; }
