@@ -31,7 +31,11 @@ Open [http://localhost:3000](http://localhost:3000), connect a wallet, watch the
 
 ## You need
 
-1. **A SkyeGate Pro license key** (`SKYE-XXXX-XXXX-XXXX`). Buy one at [skyemeta.com/skyegate](https://skyemeta.com/skyegate/) — $49/mo or $350/yr per domain. The same key works on the WordPress plugin and this SDK; one license, two stacks.
+1. **A SkyeGate Pro license key** (`SKYE-XXXX-XXXX-XXXX`). Buy direct:
+   - **[Annual — $350/yr](https://buy.stripe.com/8x26oA9F6eWAeAC7S804805)** (save 40%)
+   - [Monthly — $49/mo](https://buy.stripe.com/eVqbIU18A6q43VY7S804800)
+
+   Same key works on the WordPress plugin and this SDK — one license, two stacks. Comparison and FAQ at [skyemeta.com/skyegate](https://skyemeta.com/skyegate/).
 2. **A WalletConnect Project ID** for RainbowKit. Free at [cloud.walletconnect.com](https://cloud.walletconnect.com/).
 
 Set both in `.env.local`:
