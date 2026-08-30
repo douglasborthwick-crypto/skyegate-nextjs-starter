@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useEffect, useState } from 'react';
+import { useAccount, useSignMessage } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { proveWalletOwnership } from '@skyemeta/skyegate';
 import { GatedContent, type Condition } from '@skyemeta/skyegate/react';
 
 // Default condition: any wallet holding at least 0.000001 ETH on mainnet.
@@ -19,8 +20,27 @@ const CONDITIONS: Condition[] = [
 
 export default function Home() {
   const { address, isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
   const [secret, setSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // One free signature proves you control the address — the proxy requires
+  // it for licensed EVM verifies. The token covers the whole visit.
+  const [proof, setProof] = useState<string | undefined>();
+  useEffect(() => {
+    let cancelled = false;
+    setProof(undefined);
+    if (!address) return;
+    proveWalletOwnership({
+      address,
+      signMessage: (message) => signMessageAsync({ message }),
+    }).then((r) => {
+      if (cancelled) return;
+      if (r.error) setError(`Wallet proof failed: ${r.error}`);
+      setProof(r.proofToken ?? undefined);
+    });
+    return () => { cancelled = true; };
+  }, [address, signMessageAsync]);
 
   async function handlePass(jwt: string) {
     setError(null);
@@ -75,6 +95,8 @@ export default function Home() {
       ) : (
         <GatedContent
           address={address}
+          walletProof={proof}
+          enabled={!!proof}
           conditions={CONDITIONS}
           licenseKey={licenseKey}
           loading={
