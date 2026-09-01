@@ -51,7 +51,7 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your-project-id-here
 
 ```tsx
 // Token balance — any ERC-20 / SPL / native token
-{ type: 'token_balance', contractAddress: 'native', chainId: 1, threshold: 0.01 }
+{ type: 'token_balance', contractAddress: 'native', chainId: 1, threshold: '0.01' }
 
 // NFT ownership — any ERC-721 / ERC-1155 / Solana NFT
 { type: 'nft_ownership', contractAddress: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85', chainId: 1 }   // ENS

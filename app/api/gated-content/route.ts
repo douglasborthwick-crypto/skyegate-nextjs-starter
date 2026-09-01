@@ -10,7 +10,7 @@ const EXPECTED_CONDITIONS = [
     type: 'token_balance' as const,
     contractAddress: 'native',
     chainId: 1,
-    threshold: 0.000001,
+    threshold: '0.000001',
   },
 ];
 

@@ -13,7 +13,7 @@ const CONDITIONS: Condition[] = [
     type: 'token_balance',
     contractAddress: 'native',
     chainId: 1,
-    threshold: 0.000001,
+    threshold: '0.000001',
     label: 'ETH ≥ 0.000001 on Ethereum mainnet',
   },
 ];
