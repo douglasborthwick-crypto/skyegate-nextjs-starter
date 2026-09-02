@@ -84,8 +84,8 @@ After clicking, set `NEXT_PUBLIC_SKYE_LICENSE_KEY` and `NEXT_PUBLIC_WALLETCONNEC
 1. The browser collects a wallet address from wagmi + RainbowKit.
 2. `<GatedContent />` calls `verifyConditions(address, conditions, licenseKey)` which POSTs to the SkyeMeta proxy at `skyemeta.com/api/verify`.
 3. The proxy validates your license + domain and forwards the request to InsumerAPI. InsumerAPI returns a signed JWT.
-4. On `pass: true`, `<GatedContent>` renders its `children` and fires `onPass(jwt)`.
-5. Your `onPass` handler POSTs the JWT to `/api/gated-content`. The route handler calls `validateContentToken(jwt, { expectedConditions })` — `jose` verifies the ECDSA P-256 signature against InsumerAPI's JWKS, checks `exp`, and confirms the signed conditions match what the route requires.
+4. On `pass: true`, `<GatedContent>` renders its `children` and fires `onPass(jwt, pqJwt)`; `pqJwt` is the ML-DSA-65 post-quantum companion InsumerAPI returns beside the ES256 JWT.
+5. Your `onPass` handler POSTs both tokens to `/api/gated-content`. The route handler calls `validateContentToken(jwt, { expectedConditions, pqJwt })`: `jose` verifies the ECDSA P-256 signature against InsumerAPI's JWKS, checks `exp`, confirms the signed conditions match what the route requires, and reports the companion as `result.pq` (verified, refuted, absent, or unverifiable; a refuted companion always fails).
 6. Only on a clean `pass` does the route return the gated content. The text never reaches the browser otherwise — not even in the page source or the JS bundle.
 
 ## License

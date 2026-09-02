@@ -15,7 +15,7 @@ const EXPECTED_CONDITIONS = [
 ];
 
 export async function POST(req: Request) {
-  let body: { jwt?: string };
+  let body: { jwt?: string; pqJwt?: string };
   try {
     body = await req.json();
   } catch {
@@ -26,8 +26,12 @@ export async function POST(req: Request) {
     return Response.json({ error: 'Missing jwt' }, { status: 400 });
   }
 
+  // pqJwt is the post-quantum companion of jwt. It is checked and reported as result.pq
+  // (verified / refuted / absent / unverifiable); a refuted companion always fails. Set
+  // pqRequiredFrom to your own cutoff date once you want an absent companion to fail too.
   const result = await validateContentToken(body.jwt, {
     expectedConditions: EXPECTED_CONDITIONS,
+    pqJwt: body.pqJwt,
   });
 
   if (!result.pass) {
