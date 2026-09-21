@@ -22,7 +22,9 @@ export default function Home() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const [secret, setSecret] = useState<string | null>(null);
+  const [pqStatus, setPqStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [proofError, setProofError] = useState<string | null>(null);
 
   // One free signature proves you control the address — the proxy requires
   // it for licensed EVM verifies. The token covers the whole visit.
@@ -30,13 +32,14 @@ export default function Home() {
   useEffect(() => {
     let cancelled = false;
     setProof(undefined);
+    setProofError(null);
     if (!address) return;
     proveWalletOwnership({
       address,
       signMessage: (message) => signMessageAsync({ message }),
     }).then((r) => {
       if (cancelled) return;
-      if (r.error) setError(`Wallet proof failed: ${r.error}`);
+      if (r.error) setProofError(r.error);
       setProof(r.proofToken ?? undefined);
     });
     return () => { cancelled = true; };
@@ -45,6 +48,7 @@ export default function Home() {
   async function handlePass(jwt: string, pqJwt?: string) {
     setError(null);
     setSecret(null);
+    setPqStatus(null);
     try {
       const res = await fetch('/api/gated-content', {
         method: 'POST',
@@ -54,6 +58,7 @@ export default function Home() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Request failed');
       setSecret(data.secret);
+      setPqStatus(data.pq?.status ?? null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to fetch gated content');
     }
@@ -89,7 +94,22 @@ export default function Home() {
           <h2>Connect a wallet</h2>
           <p className="muted">
             Click <strong>Connect Wallet</strong> above. The gate below verifies your wallet against
-            the configured condition (default: any ETH balance on mainnet).
+            the configured condition (default: at least 0.000001 ETH on Ethereum mainnet).
+          </p>
+        </div>
+      ) : proofError ? (
+        <div className="gate-card fail">
+          <h2>Wallet signature needed</h2>
+          <p className="muted">
+            The gate needs one free signature to confirm you control this wallet. No transaction, no gas.
+          </p>
+          <p className="error">{proofError}</p>
+        </div>
+      ) : !proof ? (
+        <div className="gate-card">
+          <h2>Approve the signature in your wallet</h2>
+          <p className="muted">
+            One free signature confirms you control this wallet. No transaction, no gas.
           </p>
         </div>
       ) : (
@@ -114,6 +134,15 @@ export default function Home() {
               </p>
             </div>
           }
+          errorFallback={(message) => (
+            <div className="gate-card fail">
+              <h2>Couldn&apos;t check your wallet right now</h2>
+              <p className="muted">
+                This is not a &ldquo;no&rdquo;: the check did not come back. Try again in a moment.
+              </p>
+              <p className="error">{message}</p>
+            </div>
+          )}
           onPass={handlePass}
         >
           <div className="gate-card pass">
@@ -126,6 +155,9 @@ export default function Home() {
               <div className="secret-box">
                 <p style={{ marginBottom: 8, fontWeight: 600 }}>Secret content:</p>
                 <p style={{ margin: 0 }}>{secret}</p>
+                {pqStatus && (
+                  <p className="muted" style={{ margin: '8px 0 0' }}>Post-quantum companion: {pqStatus}</p>
+                )}
               </div>
             )}
             {error && <p className="error">{error}</p>}

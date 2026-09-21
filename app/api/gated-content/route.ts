@@ -11,6 +11,7 @@ const EXPECTED_CONDITIONS = [
     contractAddress: 'native',
     chainId: 1,
     threshold: '0.000001',
+    label: 'ETH ≥ 0.000001 on Ethereum mainnet',
   },
 ];
 
@@ -35,10 +36,11 @@ export async function POST(req: Request) {
   });
 
   if (!result.pass) {
-    return Response.json({ error: result.error ?? 'Not authorized' }, { status: 403 });
+    return Response.json({ error: result.error ?? 'Not authorized', pq: result.pq }, { status: 403 });
   }
 
   return Response.json({
+    pq: result.pq,
     secret:
       'You unlocked this server-side. The text was never in the page source or the JS bundle — your server fetched it from /api/gated-content after the signed JWT cleared validation.',
   });
